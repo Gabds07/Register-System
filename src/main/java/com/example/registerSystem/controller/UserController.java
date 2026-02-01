@@ -2,7 +2,7 @@ package com.example.registerSystem.controller;
 
 import com.example.registerSystem.domain.User;
 import com.example.registerSystem.domain.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,7 +30,13 @@ public class UserController {
 
     @PostMapping
     public User createUser(@Validated @RequestBody User user) {
-        return repository.save(user);
+        Example<User> example = Example.of(user);
+        if(DataController.validateEmail(user.getEmail()) && !DataController.userExists(example, repository)) {
+            return repository.save(user);
+        } else {
+            user.setEmail("Invalid email or user exists, try again");
+            return user;
+        }
     }
 
     @PutMapping("/{id}")
