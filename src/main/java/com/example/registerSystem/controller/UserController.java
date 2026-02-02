@@ -34,8 +34,7 @@ public class UserController {
         if(DataController.validateEmail(user.getEmail()) && !DataController.userExists(example, repository)) {
             return repository.save(user);
         } else {
-            user.setEmail("Invalid email or user exists, try again");
-            return user;
+            throw new RuntimeException("Invalid email or user already exists.");
         }
     }
 
